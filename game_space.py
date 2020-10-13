@@ -1,13 +1,7 @@
 #Controle apenas pelas teclas "W, A, S, D"
 import pygame
 from random import randint
-#Definindo música
-music = 'musica-tema.mp3'
 pygame.init()
-#Configurando música de fundo
-pygame.mixer.init()
-pygame.mixer.music.load(music)
-pygame.mixer.music.play(-1)     #Definindo loop infinito da música
 #Definindo Objetos
 a = 0
 b = -550        #Fundo
@@ -21,6 +15,12 @@ pos_a2 = 400
 pos_b2 = 500    #Asteroide Central 
 timer = 0
 tempo_segundo = 0
+#Definindo música
+musica = 'musica-tema.mp3'
+#Configurando música de fundo
+pygame.mixer.init()
+pygame.mixer.music.load(musica)
+pygame.mixer.music.play(-1)     #Definindo loop infinito da música
 #Velocidade dos objetos
 velocidade_nave = 12
 velocidade_tie = 6
@@ -87,18 +87,6 @@ while janela_aberta :
     if ((pos_b2 >= 1000)):
         pos_b2 = randint (-500,-150)
 
-#Movimentação Tie-Fighter
-#    if ((pos_y <= -180)):
-#        pos_y = randint (600,2000)
-#Configurando colisão com nave principal
-#    if ((x + 140 > pos_a and y + 182 > pos_b)):
-#        x=400
-#Movimentação Asteroide
-#    if ((pos_b <= -180)):
-#        pos_b = randint (800,1000)
-#Movimentação Asteroide2
-#    if (pos_b2 >= 1000):
-#        pos_b2 = randint (-500,-150)
 #Movimentação Fundo
     if (b >= 0):
         b = -550
