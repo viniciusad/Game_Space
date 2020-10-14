@@ -5,13 +5,13 @@ pygame.init()
 #Definindo Objetos
 a = 0
 b = -550        #Fundo
-x = 400
+x = 330
 y = 100         #Nave Principal
-pos_x = 120
+pos_x = 100
 pos_y = 400     #Tie-Fighter
-pos_a = 650
+pos_a = 560
 pos_b = 100     #Asteroide Direita
-pos_a2 = 400
+pos_a2 = 330
 pos_b2 = 500    #Asteroide Central 
 timer = 0
 tempo_segundo = 0
@@ -23,8 +23,8 @@ pygame.mixer.music.load(musica)
 pygame.mixer.music.play(-1)     #Definindo loop infinito da música
 #Velocidade dos objetos
 velocidade_nave = 12
-velocidade_tie = 6
-velocidade_asteroide = 4
+velocidade_tie = 5
+velocidade_asteroide = 3
 #Design dos objetos
 fundo = pygame.image.load('tela.png')
 nave = pygame.image.load('falcon.png')
@@ -39,7 +39,7 @@ pos_texto = texto.get_rect()
 pos_texto.center = (60,20)
 
 #Tamanho da janela e título
-janela = pygame.display.set_mode((900,600))
+janela = pygame.display.set_mode((800,600))
 pygame.display.set_caption("Space Asteroids | Controle pelas teclas 'W, A, S, D'")
 #Definindo parametros para a janela se manter aberta até usuário decidir fechar
 janela_aberta = True
@@ -57,36 +57,33 @@ while janela_aberta :
     comandos = pygame.key.get_pressed()
     if comandos[pygame.K_w] and y >= 0:
         y -= velocidade_nave
-    if comandos[pygame.K_s] and y <= 400:
+    if comandos[pygame.K_s] and y <= 415:
         y += velocidade_nave
-    if comandos[pygame.K_d] and x <= 750:
+    if comandos[pygame.K_d] and x <= 660:
         x += velocidade_nave
-    if comandos[pygame.K_a] and x >= 10:
+    if comandos[pygame.K_a] and x >= 0:
         x -= velocidade_nave
 
 #Configurando colisão lado DIREITO
-    if ((x + 140 > pos_a and y + 150 > pos_b)):
-        x=400
-
+    if ((x + 135 > pos_a and y + 110 > pos_b)):
+        x=100
 #Configurando colisão lado ESQUERDO
-    if ((x - 140 < pos_x and y + 150 > pos_y)):
-        x=400
-
+    if ((x - 125 < pos_x and y + 110 > pos_y)):
+        x=330
 #Configurando colisão no CENTRO
-    if ((x + 140 > pos_a2 and y - 150 < pos_b2)) and ((x - 140 < pos_a2 and y + 150 > pos_b2)):
-        x=600
+    if ((x + 100 > pos_a2 and y - 110 < pos_b2)) and ((x - 100 < pos_a2 and y + 110 > pos_b2)):
+        x=560
 
 #Movimentação dos Objetos
     #Asteroide Direita
-    if (pos_b <= -200):
-        pos_b = randint (800,1000)
+    if (pos_b <= -10):
+        pos_b = randint (1500,2000)
     #Tie-Fighter
-    if ((pos_y <= -400)): 
-        pos_y = randint (600,2000)
+    if ((pos_y <= -10)): 
+        pos_y = randint (1000,1500)
     #Asteroide Central
-    if ((pos_b2 >= 1000)):
-        pos_b2 = randint (-500,-150)
-
+    if ((pos_b2 >= 700)):
+        pos_b2 = randint (-800,-250)
 #Movimentação Fundo
     if (b >= 0):
         b = -550
