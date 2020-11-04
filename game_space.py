@@ -1,8 +1,7 @@
-#Controle apenas pelas teclas "W, A, S, D"
 import pygame
 from random import randint
 pygame.init()
-#Definindo Objetos
+
 a = 0
 b = -550        #Fundo
 x = 330
@@ -15,36 +14,34 @@ pos_a2 = 330
 pos_b2 = 500    #Asteroide Central 
 timer = 0
 tempo_segundo = 0
-#Definindo música
+
 musica = 'musica-tema.mp3'
-#Configurando música de fundo
+
 pygame.mixer.init()
 pygame.mixer.music.load(musica)
-pygame.mixer.music.play(-1)     #Definindo loop infinito da música
-#Velocidade dos objetos
+pygame.mixer.music.play(-1)
+
 velocidade_nave = 12
 velocidade_tie = 5
 velocidade_asteroide = 3
-#Design dos objetos
+
 fundo = pygame.image.load('tela.png')
 nave = pygame.image.load('falcon.png')
 tie = pygame.image.load('tie.png')
 asteroide = pygame.image.load('asteroide.png')
 asteroide2 = pygame.image.load('asteroide2.png')
 
-#Timer
 font = pygame.font.SysFont('Bauhaus 93',30)
 texto = font.render("Tempo: ",True,(0,200,0),(0,0,0))
 pos_texto = texto.get_rect()
 pos_texto.center = (60,20)
 
-#Tamanho da janela e título
 janela = pygame.display.set_mode((800,600))
 pygame.display.set_caption("Space Asteroids | Controle pelas teclas 'W, A, S, D'")
-#Definindo parametros para a janela se manter aberta até usuário decidir fechar
+
 janela_aberta = True
 while janela_aberta :
-    pygame.time.delay(2)  #frame de atualização da tela. Em milisegundos
+    pygame.time.delay(2)  
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             janela_aberta = False
@@ -52,8 +49,6 @@ while janela_aberta :
         if sair[pygame.K_ESCAPE]:
             janela_aberta = False
 
-#Configurando movimentação da nave principal
-#Limitando movimentação até determinado ponto da tela
     comandos = pygame.key.get_pressed()
     if comandos[pygame.K_w] and y >= 0:
         y -= velocidade_nave
@@ -64,17 +59,16 @@ while janela_aberta :
     if comandos[pygame.K_a] and x >= 0:
         x -= velocidade_nave
 
-#Configurando colisão lado DIREITO
     if ((x + 135 > pos_a and y + 110 > pos_b)):
         x=100
-#Configurando colisão lado ESQUERDO
+
     if ((x - 125 < pos_x and y + 110 > pos_y)):
         x=330
-#Configurando colisão no CENTRO
+
     if ((x + 100 > pos_a2 and y - 110 < pos_b2)) and ((x - 100 < pos_a2 and y + 110 > pos_b2)):
         x=560
 
-#Movimentação dos Objetos
+    #Movimentação dos Objetos
     #Asteroide Direita
     if (pos_b <= -10):
         pos_b = randint (1500,2000)
@@ -84,11 +78,10 @@ while janela_aberta :
     #Asteroide Central
     if ((pos_b2 >= 700)):
         pos_b2 = randint (-800,-250)
-#Movimentação Fundo
+    #Plano de Fundo
     if (b >= 0):
         b = -550
 
-#Configurando Timer
     if (timer <60):
         timer +=1
     else:
@@ -96,13 +89,11 @@ while janela_aberta :
         texto = font.render("Tempo: "+str(tempo_segundo),True,(0,200,0),(0,0,0))
         timer = 0
 
-#Incrementando ou decrementando o movimento dos objetos, para que se movam continuamente
     b += velocidade_nave - 11
     pos_y -= velocidade_tie
     pos_b -= velocidade_asteroide + 3
     pos_b2 += velocidade_asteroide
 
-#Exibir na janela o posicionamento dos objetos
     janela.blit(fundo,(a,b))
     janela.blit(nave,(x,y))
     janela.blit(tie,(pos_x, pos_y))
