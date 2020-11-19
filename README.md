@@ -6,7 +6,7 @@
 </a>
 <img  alt="License"  src="https://img.shields.io/badge/license-MIT-brightgreen">
 <a  href="https://github.com/viniciusad/template/stargazers">
-<img  alt="Stargazers"  src="https://img.shields.io/github/stars/viniciusad/template?style=social">
+<img  alt="Stargazers"  src="https://img.shields.io/github/stars/viniciusad/Game_Space?style=social">
 </a>
 </p>
 
