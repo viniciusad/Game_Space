@@ -5,7 +5,7 @@
 <img  alt="GitHub last commit"  src="https://img.shields.io/github/last-commit/viniciusad/Game_Space">
 </a>
 <img  alt="License"  src="https://img.shields.io/badge/license-MIT-brightgreen">
-<a  href="https://github.com/viniciusad/template/stargazers">
+<a  href="https://github.com/viniciusad/Game_Space/stargazers">
 <img  alt="Stargazers"  src="https://img.shields.io/github/stars/viniciusad/Game_Space?style=social">
 </a>
 </p>
