@@ -1,11 +1,13 @@
 import pygame
+import sys
 from random import randint
+from pygame.locals import *
 pygame.init()
 
 a = 0
 b = -550  # Fundo
-x = 330
-y = 100  # Nave Principal
+# x = 330
+# y = 100  # Nave Principal
 pos_x = 100
 pos_y = 400  # Tie-Fighter
 pos_a = 560
@@ -14,6 +16,11 @@ pos_a2 = 330
 pos_b2 = 500  # Asteroide Central
 timer = 0
 tempo_segundo = 0
+
+offset = [0, 0]
+click = False
+Rclick = False
+Mclick = False
 
 pygame.mixer.init()
 pygame.mixer.music.load('assets/musica-tema.mp3')
@@ -28,7 +35,7 @@ nave = pygame.image.load('assets/falcon.png')
 tie = pygame.image.load('assets/tie.png')
 asteroide = pygame.image.load('assets/asteroide.png')
 asteroide2 = pygame.image.load('assets/asteroide2.png')
-icone = pygame.image.load('assets/GameSpace.png')
+icone = pygame.image.load('assets/GameSpace.ico')
 pygame.display.set_icon(icone)
 
 font = pygame.font.SysFont('Bauhaus 93', 30)
@@ -40,34 +47,64 @@ janela = pygame.display.set_mode((800, 600))
 pygame.display.set_caption(
     "Game Space | Controle pelas teclas 'W, A, S, D'")
 
-janela_aberta = True
-while janela_aberta:
-    pygame.time.delay(2)
+while True:
+    rot = 0
+    mx, my = pygame.mouse.get_pos()
+    position = [mx, my]
+    if click:
+        rot -= 90
+    if Rclick:
+        rot += 180
+    if Mclick:
+        rot += 90
+    janela.blit(pygame.transform.rotate(nave, rot),
+                (position[0] + offset[0], position[1] + offset[1]))
+
+    Rclick = False
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            janela_aberta = False
-        sair = pygame.key.get_pressed()
-        if sair[pygame.K_ESCAPE]:
-            janela_aberta = False
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+        if event.type == MOUSEBUTTONDOWN:
+            if event.button == 1:
+                click = True
+            if event.button == 3:
+                Rclick = True
+            if event.button == 2:
+                Mclick = not Mclick
+            if event.button == 4:
+                offset[1] -= 10
+            if event.button == 5:
+                offset[1] += 10
 
-    comandos = pygame.key.get_pressed()
-    if comandos[pygame.K_w] and y >= 0:
-        y -= velocidade_nave
-    if comandos[pygame.K_s] and y <= 415:
-        y += velocidade_nave
-    if comandos[pygame.K_d] and x <= 660:
-        x += velocidade_nave
-    if comandos[pygame.K_a] and x >= 0:
-        x -= velocidade_nave
+        if event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                click = False
 
-    if ((x + 135 > pos_a and y + 110 > pos_b)):
-        x = 100
+# ------------ TESTE COLISÃO --------------
+    # limite = pygame.mouse.get_pos()
+    # if (nave, (mx-70, my-70)) and y >= 0:
+    #     y -= velocidade_nave
+    # if (nave, (mx-70, my-70)) and y <= 415:
+    #     y += velocidade_nave
+    # if (nave, (mx-70, my-70)) and x <= 660:
+    #     x += velocidade_nave
+    # if (nave, (mx-70, my-70)) and x >= 0:
+    #     x -= velocidade_nave
 
-    if ((x - 125 < pos_x and y + 110 > pos_y)):
-        x = 330
+    # if ((mx + 135 > pos_a and my + 110 > pos_b)):
+    #     mx = 100
 
-    if ((x + 100 > pos_a2 and y - 110 < pos_b2)) and ((x - 100 < pos_a2 and y + 110 > pos_b2)):
-        x = 560
+    # if ((mx - 125 < pos_x and my + 110 > pos_y)):
+    #     mx = 330
+
+    # if ((mx + 100 > pos_a2 and my - 110 < pos_b2)) and ((mx - 100 < pos_a2 and my + 110 > pos_b2)):
+    #     mx = 560
+# ------------ TESTE COLISÃO --------------
 
     # Movimentação dos Objetos
     # Asteroide Direita
@@ -97,7 +134,7 @@ while janela_aberta:
     pos_b2 += velocidade_asteroide
 
     janela.blit(fundo, (a, b))
-    janela.blit(nave, (x, y))
+    janela.blit(nave, (mx-70, my-70))
     janela.blit(tie, (pos_x, pos_y))
     janela.blit(asteroide, (pos_a, pos_b))
     janela.blit(asteroide2, (pos_a2, pos_b2))
