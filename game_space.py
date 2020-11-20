@@ -15,21 +15,19 @@ pos_b2 = 500  # Asteroide Central
 timer = 0
 tempo_segundo = 0
 
-musica = 'musica-tema.mp3'
-
 pygame.mixer.init()
-pygame.mixer.music.load(musica)
-pygame.mixer.music.play(-1)
+pygame.mixer.music.load('assets/musica-tema.mp3')
+pygame.mixer.music.play(0)
 
 velocidade_nave = 12
 velocidade_tie = 5
 velocidade_asteroide = 3
 
-fundo = pygame.image.load('tela.png')
-nave = pygame.image.load('falcon.png')
-tie = pygame.image.load('tie.png')
-asteroide = pygame.image.load('asteroide.png')
-asteroide2 = pygame.image.load('asteroide2.png')
+fundo = pygame.image.load('assets/tela.png')
+nave = pygame.image.load('assets/falcon.png')
+tie = pygame.image.load('assets/tie.png')
+asteroide = pygame.image.load('assets/asteroide.png')
+asteroide2 = pygame.image.load('assets/asteroide2.png')
 
 font = pygame.font.SysFont('Bauhaus 93', 30)
 texto = font.render("Tempo: ", True, (0, 200, 0), (0, 0, 0))
@@ -38,7 +36,7 @@ pos_texto.center = (60, 20)
 
 janela = pygame.display.set_mode((800, 600))
 pygame.display.set_caption(
-    "Space Asteroids | Controle pelas teclas 'W, A, S, D'")
+    "Game Space | Controle pelas teclas 'W, A, S, D'")
 
 janela_aberta = True
 while janela_aberta:
