@@ -17,7 +17,7 @@ tempo_segundo = 0
 
 pygame.mixer.init()
 pygame.mixer.music.load('assets/musica-tema.mp3')
-pygame.mixer.music.play(0)
+pygame.mixer.music.play(-1)
 
 velocidade_nave = 12
 velocidade_tie = 5
@@ -28,6 +28,8 @@ nave = pygame.image.load('assets/falcon.png')
 tie = pygame.image.load('assets/tie.png')
 asteroide = pygame.image.load('assets/asteroide.png')
 asteroide2 = pygame.image.load('assets/asteroide2.png')
+icone = pygame.image.load('assets/GameSpace.png')
+pygame.display.set_icon(icone)
 
 font = pygame.font.SysFont('Bauhaus 93', 30)
 texto = font.render("Tempo: ", True, (0, 200, 0), (0, 0, 0))

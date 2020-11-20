@@ -10,7 +10,7 @@
 </a>
 </p>
 
-<img src="https://raw.githubusercontent.com/viniciusad/Game_Space/main/imagens/print_1.png">
+<img src="https://raw.githubusercontent.com/viniciusad/Game_Space/main/assets/screencaptures/v1.gif">
 
 ## 🕹 Game_Space
 Esse é um beta de um beta que está em teste...
