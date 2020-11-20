@@ -15,7 +15,8 @@ pos_b2 = 500  # Asteroide Central
 timer = 0
 tempo_segundo = 0
 
-musica = 'https://github.com/viniciusad/Game_Space/assets/musica-tema.mp3'
+musica = 'musica-tema.mp3'
+
 pygame.mixer.init()
 pygame.mixer.music.load(musica)
 pygame.mixer.music.play(-1)
@@ -24,16 +25,11 @@ velocidade_nave = 12
 velocidade_tie = 5
 velocidade_asteroide = 3
 
-fundo = pygame.image.load(
-    src='https://github.com/viniciusad/Game_Space/assets/tela.png')
-nave = pygame.image.load(
-    src='https://github.com/viniciusad/Game_Space/assets/falcon.png')
-tie = pygame.image.load(
-    src='https://github.com/viniciusad/Game_Space/assets/tie.png')
-asteroide = pygame.image.load(
-    src='https://github.com/viniciusad/Game_Space/assets/asteroide.png')
-asteroide2 = pygame.image.load(
-    src='https://github.com/viniciusad/Game_Space/assets/asteroide2.png')
+fundo = pygame.image.load('tela.png')
+nave = pygame.image.load('falcon.png')
+tie = pygame.image.load('tie.png')
+asteroide = pygame.image.load('asteroide.png')
+asteroide2 = pygame.image.load('asteroide2.png')
 
 font = pygame.font.SysFont('Bauhaus 93', 30)
 texto = font.render("Tempo: ", True, (0, 200, 0), (0, 0, 0))
@@ -64,16 +60,16 @@ while janela_aberta:
     if comandos[pygame.K_a] and x >= 0:
         x -= velocidade_nave
 
-# Configurando colisão lado DIREITO
     if ((x + 135 > pos_a and y + 110 > pos_b)):
         x = 100
-# Configurando colisão lado ESQUERDO
+
     if ((x - 125 < pos_x and y + 110 > pos_y)):
         x = 330
-# Configurando colisão no CENTRO
+
     if ((x + 100 > pos_a2 and y - 110 < pos_b2)) and ((x - 100 < pos_a2 and y + 110 > pos_b2)):
         x = 560
 
+    # Movimentação dos Objetos
     # Asteroide Direita
     if (pos_b <= -10):
         pos_b = randint(1500, 2000)
