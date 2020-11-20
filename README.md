@@ -13,9 +13,11 @@
 <img src="https://raw.githubusercontent.com/viniciusad/Game_Space/main/assets/screencaptures/v1.gif" width="40%">
 
 ## 🕹 Game_Space
-Esse é um beta de um beta que está em teste...
-
+Esse repositório foi criado com intuito de estudar a linguagem e passar o tempo, como um hobby mesmo.
 Apenas um exercício na linguagem, em que vou adicionando periodicamente mais funções ao jogo.
+
+## 🔗 Baixe e Visualize no seu PC
+https://github.com/viniciusad/Game_Space/raw/main/Game_Space_EXE.zip
 
 
 ## 📧 Contato
