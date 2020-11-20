@@ -105,7 +105,7 @@ while True:
     # if ((mx + 100 > pos_a2 and my - 110 < pos_b2)) and ((mx - 100 < pos_a2 and my + 110 > pos_b2)):
     #     mx = 560
 # ------------ TESTE COLISÃO --------------
-
+ 
     # Movimentação dos Objetos
     # Asteroide Direita
     if (pos_b <= -10):
