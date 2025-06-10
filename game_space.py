@@ -34,6 +34,8 @@ prev_mouse = ship_pos[:]
 lasers = []
 explosoes = []
 laser_speed = 8
+# tempo do campo de forca (em frames)
+force_field_timer = 0
 power_level = 0
 proximo_power = 10
 
@@ -75,12 +77,17 @@ pygame.display.set_caption(
 clock = pygame.time.Clock()
 
 
-def fire_lasers(center):
-    """Cria lasers de acordo com o nivel de poder atual."""
+def fire_lasers(center, angle):
+    """Cria lasers de acordo com o nivel de poder atual e direcao da nave."""
+    rad = math.radians(angle)
+    # vetor perpendicular para espalhar lasers
+    perp = rad + math.pi / 2
     for i in range(power_level):
         offset = (i - (power_level - 1) / 2) * 15
-        rect = pygame.Rect(center[0] + offset - 2, center[1] - 30, 4, 15)
-        lasers.append(rect)
+        x = center[0] + math.cos(rad) * 30 + math.cos(perp) * offset
+        y = center[1] - math.sin(rad) * 30 - math.sin(perp) * offset
+        rect = pygame.Rect(x - 2, y - 8, 4, 15)
+        lasers.append({'rect': rect, 'dx': math.cos(rad), 'dy': -math.sin(rad)})
 
 
 def update_power():
@@ -95,7 +102,7 @@ def update_power():
 def reset_game():
     global pos_x, pos_y, pos_a, pos_b, pos_a2, pos_b2
     global tempo_segundo, timer, game_over, ship_pos, lasers, explosoes
-    global power_level, proximo_power, ship_angle, prev_mouse
+    global power_level, proximo_power, ship_angle, prev_mouse, force_field_timer
     tempo_segundo = 0
     timer = 0
     pos_x = randint(0, WIDTH - 100)
@@ -112,6 +119,7 @@ def reset_game():
     explosoes.clear()
     power_level = 0
     proximo_power = 10
+    force_field_timer = 0
 
 
 while True:
@@ -186,25 +194,28 @@ while True:
         pos_b2 += velocidade_asteroide
 
         if shooting and power_level > 0:
-            fire_lasers(nave_rect.center)
+            fire_lasers(nave_rect.center, rot)
+            force_field_timer = 120  # 2 segundos a 60fps
 
         # Atualiza lasers
         for laser in list(lasers):
-            laser.y -= laser_speed
-            if laser.y < -20:
+            laser['rect'].x += laser['dx'] * laser_speed
+            laser['rect'].y += laser['dy'] * laser_speed
+            if (laser['rect'].right < 0 or laser['rect'].left > WIDTH or
+                    laser['rect'].bottom < 0 or laser['rect'].top > HEIGHT):
                 lasers.remove(laser)
             else:
-                if laser.colliderect(tie_rect):
+                if laser['rect'].colliderect(tie_rect):
                     explosoes.append({'pos': tie_rect.center, 'timer': 10})
                     pos_y = randint(HEIGHT, HEIGHT + 300)
                     pos_x = randint(0, WIDTH - 100)
                     lasers.remove(laser)
-                elif laser.colliderect(ast_rect):
+                elif laser['rect'].colliderect(ast_rect):
                     explosoes.append({'pos': ast_rect.center, 'timer': 10})
                     pos_b = randint(HEIGHT, HEIGHT + 300)
                     pos_a = randint(0, WIDTH - 100)
                     lasers.remove(laser)
-                elif laser.colliderect(ast2_rect):
+                elif laser['rect'].colliderect(ast2_rect):
                     explosoes.append({'pos': ast2_rect.center, 'timer': 10})
                     pos_b2 = randint(-300, -100)
                     pos_a2 = randint(0, WIDTH - 100)
@@ -214,7 +225,7 @@ while True:
             game_over = True
 
         for laser in lasers:
-            pygame.draw.rect(janela, (255, 0, 0), laser)
+            pygame.draw.rect(janela, (255, 0, 0), laser['rect'])
 
         for exp in list(explosoes):
             pygame.draw.circle(janela, (255, 100, 0), exp['pos'], 20 - exp['timer'])
@@ -224,6 +235,12 @@ while True:
 
         rotated_nave = pygame.transform.rotate(nave, rot)
         rot_rect = rotated_nave.get_rect(center=nave_rect.center)
+        if force_field_timer > 0:
+            radius = max(rot_rect.width, rot_rect.height) // 2 + 10
+            aura = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+            pygame.draw.circle(aura, (255, 255, 255, 128), (radius, radius), radius)
+            janela.blit(aura, aura.get_rect(center=rot_rect.center))
+            force_field_timer -= 1
         janela.blit(rotated_nave, rot_rect.topleft)
         janela.blit(tie, (pos_x, pos_y))
         janela.blit(asteroide, (pos_a, pos_b))
