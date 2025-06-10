@@ -2,20 +2,25 @@ import pygame
 import sys
 from random import randint
 from pygame.locals import *
+
 pygame.init()
+
+WIDTH, HEIGHT = 800, 600
 
 a = 0
 b = -550  # Fundo
-# x = 330
-# y = 100  # Nave Principal
-pos_x = 100
-pos_y = 400  # Tie-Fighter
-pos_a = 560
-pos_b = 100  # Asteroide Direita
-pos_a2 = 330
-pos_b2 = 500  # Asteroide Central
+
+# Posiciona inimigos de forma aleatória
+pos_x = randint(0, WIDTH - 100)
+pos_y = randint(HEIGHT + 100, HEIGHT + 300)  # Tie-Fighter
+pos_a = randint(0, WIDTH - 100)
+pos_b = randint(100, HEIGHT + 200)  # Asteroide Direita
+pos_a2 = randint(0, WIDTH - 100)
+pos_b2 = randint(-300, -100)  # Asteroide Central
+
 timer = 0
 tempo_segundo = 0
+game_over = False
 
 offset = [0, 0]
 click = False
@@ -39,38 +44,57 @@ icone = pygame.image.load('assets/GameSpace.ico')
 pygame.display.set_icon(icone)
 
 font = pygame.font.SysFont('Bauhaus 93', 30)
+big_font = pygame.font.SysFont('Bauhaus 93', 50)
 texto = font.render("Tempo: ", True, (0, 200, 0), (0, 0, 0))
 pos_texto = texto.get_rect()
 pos_texto.center = (60, 20)
+restart_rect = pygame.Rect(WIDTH//2 - 100, HEIGHT//2 + 50, 200, 50)
 
-janela = pygame.display.set_mode((800, 600))
+janela = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(
     "Game Space | Controle pelo Mouse")
 
+clock = pygame.time.Clock()
+
+def reset_game():
+    global pos_x, pos_y, pos_a, pos_b, pos_a2, pos_b2, tempo_segundo, timer, game_over
+    tempo_segundo = 0
+    timer = 0
+    pos_x = randint(0, WIDTH - 100)
+    pos_y = randint(HEIGHT + 100, HEIGHT + 300)
+    pos_a = randint(0, WIDTH - 100)
+    pos_b = randint(HEIGHT, HEIGHT + 300)
+    pos_a2 = randint(0, WIDTH - 100)
+    pos_b2 = randint(-300, -100)
+    game_over = False
+
+
 while True:
-    rot = 0
     mx, my = pygame.mouse.get_pos()
-    position = [mx, my]
+    nave_rect = nave.get_rect(center=(mx, my))
+    tie_rect = tie.get_rect(topleft=(pos_x, pos_y))
+    ast_rect = asteroide.get_rect(topleft=(pos_a, pos_b))
+    ast2_rect = asteroide2.get_rect(topleft=(pos_a2, pos_b2))
+
+    rot = 0
     if click:
         rot -= 90
     if Rclick:
         rot += 180
     if Mclick:
         rot += 90
-    janela.blit(pygame.transform.rotate(nave, rot),
-                (position[0] + offset[0], position[1] + offset[1]))
 
-    Rclick = False
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+        if event.type == KEYDOWN and event.key == K_ESCAPE:
+            pygame.quit()
+            sys.exit()
         if event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
+                if game_over and restart_rect.collidepoint(event.pos):
+                    reset_game()
                 click = True
             if event.button == 3:
                 Rclick = True
@@ -80,65 +104,55 @@ while True:
                 offset[1] -= 10
             if event.button == 5:
                 offset[1] += 10
-
         if event.type == MOUSEBUTTONUP:
             if event.button == 1:
                 click = False
 
-# ------------ TESTE COLISÃO --------------
-    # limite = pygame.mouse.get_pos()
-    # if (nave, (mx-70, my-70)) and y >= 0:
-    #     y -= velocidade_nave
-    # if (nave, (mx-70, my-70)) and y <= 415:
-    #     y += velocidade_nave
-    # if (nave, (mx-70, my-70)) and x <= 660:
-    #     x += velocidade_nave
-    # if (nave, (mx-70, my-70)) and x >= 0:
-    #     x -= velocidade_nave
-
-    # if ((mx + 135 > pos_a and my + 110 > pos_b)):
-    #     mx = 100
-
-    # if ((mx - 125 < pos_x and my + 110 > pos_y)):
-    #     mx = 330
-
-    # if ((mx + 100 > pos_a2 and my - 110 < pos_b2)) and ((mx - 100 < pos_a2 and my + 110 > pos_b2)):
-    #     mx = 560
-# ------------ TESTE COLISÃO --------------
-
-    # Movimentação dos Objetos
-    # Asteroide Direita
-    if (pos_b <= -10):
-        pos_b = randint(1500, 2000)
-    # Tie-Fighter
-    if ((pos_y <= -10)):
-        pos_y = randint(1000, 1500)
-    # Asteroide Central
-    if ((pos_b2 >= 700)):
-        pos_b2 = randint(-800, -250)
-    # Plano de Fundo
-    if (b >= 0):
-        b = -550
-
-    if (timer < 60):
-        timer += 1
-    else:
-        tempo_segundo += 1
-        texto = font.render("Tempo: "+str(tempo_segundo),
-                            True, (0, 200, 0), (0, 0, 0))
-        timer = 0
-
-    b += velocidade_nave - 11
-    pos_y -= velocidade_tie
-    pos_b -= velocidade_asteroide + 3
-    pos_b2 += velocidade_asteroide
-
     janela.blit(fundo, (a, b))
-    janela.blit(nave, (mx-70, my-70))
-    janela.blit(tie, (pos_x, pos_y))
-    janela.blit(asteroide, (pos_a, pos_b))
-    janela.blit(asteroide2, (pos_a2, pos_b2))
-    janela.blit(texto, pos_texto)
+
+    if not game_over:
+        # Movimentacao dos Objetos
+        if pos_b <= -10:
+            pos_b = randint(HEIGHT, HEIGHT + 300)
+            pos_a = randint(0, WIDTH - 100)
+        if pos_y <= -10:
+            pos_y = randint(HEIGHT, HEIGHT + 300)
+            pos_x = randint(0, WIDTH - 100)
+        if pos_b2 >= HEIGHT:
+            pos_b2 = randint(-300, -100)
+            pos_a2 = randint(0, WIDTH - 100)
+        if b >= 0:
+            b = -550
+
+        if timer < 60:
+            timer += 1
+        else:
+            tempo_segundo += 1
+            texto = font.render("Tempo: "+str(tempo_segundo), True, (0, 200, 0), (0, 0, 0))
+            timer = 0
+
+        b += velocidade_nave - 11
+        pos_y -= velocidade_tie
+        pos_b -= velocidade_asteroide + 3
+        pos_b2 += velocidade_asteroide
+
+        if nave_rect.colliderect(tie_rect) or nave_rect.colliderect(ast_rect) or nave_rect.colliderect(ast2_rect):
+            game_over = True
+
+        janela.blit(pygame.transform.rotate(nave, rot), (mx-70, my-70))
+        janela.blit(tie, (pos_x, pos_y))
+        janela.blit(asteroide, (pos_a, pos_b))
+        janela.blit(asteroide2, (pos_a2, pos_b2))
+        janela.blit(texto, pos_texto)
+    else:
+        score = big_font.render(f"Score: {tempo_segundo}s", True, (255, 255, 255))
+        score_rect = score.get_rect(center=(WIDTH//2, HEIGHT//2 - 50))
+        restart_text = font.render("Reiniciar", True, (255, 255, 255))
+        pygame.draw.rect(janela, (50, 50, 50), restart_rect)
+        janela.blit(restart_text, restart_text.get_rect(center=restart_rect.center))
+        janela.blit(score, score_rect)
 
     pygame.display.update()
+    clock.tick(60)
+
 pygame.quit()
