@@ -1,12 +1,13 @@
 import pygame
 import sys
+import math
 from random import randint
 from pygame.locals import *
 
 pygame.init()
 
-# Tamanho da tela um pouco maior para dar mais espaco ao jogador
-WIDTH, HEIGHT = 960, 720
+# Tamanho da tela ampliado
+WIDTH, HEIGHT = 1280, 960
 
 # Variaveis de deslocamento do fundo
 a = 0
@@ -24,8 +25,10 @@ timer = 0
 tempo_segundo = 0
 game_over = False
 
-# Controle de movimento mais suave
+# Controle de movimento mais suave e angulo da nave
 ship_pos = [WIDTH // 2, HEIGHT // 2]
+ship_angle = 0
+prev_mouse = ship_pos[:]
 
 # Listas para lasers e explosoes
 lasers = []
@@ -92,7 +95,7 @@ def update_power():
 def reset_game():
     global pos_x, pos_y, pos_a, pos_b, pos_a2, pos_b2
     global tempo_segundo, timer, game_over, ship_pos, lasers, explosoes
-    global power_level, proximo_power
+    global power_level, proximo_power, ship_angle, prev_mouse
     tempo_segundo = 0
     timer = 0
     pos_x = randint(0, WIDTH - 100)
@@ -103,6 +106,8 @@ def reset_game():
     pos_b2 = randint(-300, -100)
     game_over = False
     ship_pos = [WIDTH // 2, HEIGHT // 2]
+    ship_angle = 0
+    prev_mouse = ship_pos[:]
     lasers.clear()
     explosoes.clear()
     power_level = 0
@@ -112,12 +117,20 @@ def reset_game():
 while True:
     shooting = False
     mx, my = pygame.mouse.get_pos()
+    mouse_dx = mx - prev_mouse[0]
+    mouse_dy = my - prev_mouse[1]
+    mouse_speed = math.hypot(mouse_dx, mouse_dy)
+    prev_mouse[0], prev_mouse[1] = mx, my
     nave_rect = nave.get_rect(center=(int(ship_pos[0]), int(ship_pos[1])))
     tie_rect = tie.get_rect(topleft=(pos_x, pos_y))
     ast_rect = asteroide.get_rect(topleft=(pos_a, pos_b))
     ast2_rect = asteroide2.get_rect(topleft=(pos_a2, pos_b2))
 
-    rot = 0
+    target_angle = math.degrees(math.atan2(-(my - ship_pos[1]), mx - ship_pos[0]))
+    delta = (target_angle - ship_angle + 180) % 360 - 180
+    rot_speed = 0.05 + min(0.45, mouse_speed * 0.01)
+    ship_angle += delta * rot_speed
+    rot = ship_angle
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -209,7 +222,9 @@ while True:
             if exp['timer'] <= 0:
                 explosoes.remove(exp)
 
-        janela.blit(pygame.transform.rotate(nave, rot), nave_rect.topleft)
+        rotated_nave = pygame.transform.rotate(nave, rot)
+        rot_rect = rotated_nave.get_rect(center=nave_rect.center)
+        janela.blit(rotated_nave, rot_rect.topleft)
         janela.blit(tie, (pos_x, pos_y))
         janela.blit(asteroide, (pos_a, pos_b))
         janela.blit(asteroide2, (pos_a2, pos_b2))
